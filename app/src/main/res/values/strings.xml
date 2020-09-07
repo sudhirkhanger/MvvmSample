@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NetworkSample</string>
+    <string name="refresh">Refresh</string>
+    <string name="search_type_here">Type here to search</string>
+    <string name="no_data_msg">Data unavailable. Please refresh to fetch the content.</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="please_wait">Please wait</string>
+</resources>
