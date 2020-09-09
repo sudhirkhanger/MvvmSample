@@ -25,7 +25,7 @@ class FourthActivityViewModel internal constructor(
         getCountries()
     }
 
-    private fun getCountries() {
+    fun getCountries() {
         viewModelScope.launch {
             repository.expoList()
                 .onStart { _countriesLiveData.postValue(Resource.loading(null)) }

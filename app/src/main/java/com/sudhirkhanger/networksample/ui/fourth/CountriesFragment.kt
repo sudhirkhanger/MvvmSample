@@ -34,10 +34,10 @@ class CountriesFragment : Fragment() {
     private var isRefreshEnabled = true
     private lateinit var countriesAdapter: CountriesAdapter
 
-    /*override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }*/
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,7 +68,7 @@ class CountriesFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_refresh -> {
                 if (isRefreshEnabled)
@@ -79,7 +79,7 @@ class CountriesFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }*/
+    }
 
     private fun loading() {
         fragmentExpoBinding?.blockView?.visibility = View.VISIBLE
@@ -92,9 +92,9 @@ class CountriesFragment : Fragment() {
     private fun error(message: String) {
         fragmentExpoBinding?.blockView?.visibility = View.GONE
         fragmentExpoBinding?.progressBar?.visibility = View.GONE
-        fragmentExpoBinding?.statusTv?.visibility = View.VISIBLE
-        fragmentExpoBinding?.statusTv?.text = message
+        fragmentExpoBinding?.statusTv?.visibility = View.GONE
         isRefreshEnabled = true
+        snackBar(message)?.show()
     }
 
     private fun success() {
