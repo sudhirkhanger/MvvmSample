@@ -22,5 +22,5 @@ class NetworkSampleRepository private constructor(
                 }
     }
 
-    fun expoList(): Flow<CountriesResponse> = flow { emit(networkSampleService.countries()) }
+    fun getCountries(): Flow<CountriesResponse> = flow { emit(networkSampleService.countries()) }
 }
