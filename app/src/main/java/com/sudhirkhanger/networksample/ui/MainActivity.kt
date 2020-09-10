@@ -1,18 +1,18 @@
-package com.sudhirkhanger.networksample.ui.fourth
+package com.sudhirkhanger.networksample.ui
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import com.sudhirkhanger.networksample.databinding.ActivityFourthBinding
+import com.sudhirkhanger.networksample.databinding.ActivityMainBinding
 
-class FourthActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityFourthBinding
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFourthBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportFragmentManager.commit {

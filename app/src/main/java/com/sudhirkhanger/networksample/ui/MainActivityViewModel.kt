@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample.ui.fourth
+package com.sudhirkhanger.networksample.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-class FourthActivityViewModel internal constructor(
+class MainActivityViewModel internal constructor(
     private val repository: NetworkSampleRepository
 ) : ViewModel() {
 

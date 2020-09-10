@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample.ui.fourth
+package com.sudhirkhanger.networksample.ui
 
 import android.app.Activity
 import android.os.Bundle
@@ -27,7 +27,7 @@ class CountriesFragment : Fragment() {
         fun newInstance() = CountriesFragment()
     }
 
-    private val viewModel: FourthActivityViewModel by activityViewModels {
+    private val viewModel: MainActivityViewModel by activityViewModels {
         NetworkSampleComponent.provideMainViewModelFactory()
     }
 
@@ -64,7 +64,7 @@ class CountriesFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_expo, menu)
+        inflater.inflate(R.menu.menu_main, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 

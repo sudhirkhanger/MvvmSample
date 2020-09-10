@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample.ui.fourth
+package com.sudhirkhanger.networksample.ui
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
@@ -7,13 +7,13 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class CountriesResponse(
 
-	@field:SerializedName("data")
+    @field:SerializedName("data")
 	val data: List<Country?>? = null,
 
-	@field:SerializedName("message")
+    @field:SerializedName("message")
 	val message: String? = null,
 
-	@field:SerializedName("status")
+    @field:SerializedName("status")
 	val status: String? = null
 ) : Parcelable
 

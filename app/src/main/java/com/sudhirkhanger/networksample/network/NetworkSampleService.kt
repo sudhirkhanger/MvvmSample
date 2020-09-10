@@ -1,6 +1,6 @@
 package com.sudhirkhanger.networksample.network
 
-import com.sudhirkhanger.networksample.ui.fourth.CountriesResponse
+import com.sudhirkhanger.networksample.ui.CountriesResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

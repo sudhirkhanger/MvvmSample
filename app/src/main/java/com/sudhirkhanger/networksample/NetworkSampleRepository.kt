@@ -1,6 +1,6 @@
 package com.sudhirkhanger.networksample
 
-import com.sudhirkhanger.networksample.ui.fourth.CountriesResponse
+import com.sudhirkhanger.networksample.ui.CountriesResponse
 import com.sudhirkhanger.networksample.network.NetworkSampleService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
