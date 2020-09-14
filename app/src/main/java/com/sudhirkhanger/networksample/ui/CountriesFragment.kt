@@ -17,6 +17,7 @@ import com.sudhirkhanger.networksample.R
 import com.sudhirkhanger.networksample.databinding.FragmentCountriesBinding
 import com.sudhirkhanger.networksample.network.model.Status
 import com.sudhirkhanger.networksample.utils.DefaultItemDecoration
+import com.sudhirkhanger.networksample.utils.EventObserver
 
 class CountriesFragment : Fragment() {
 
@@ -61,6 +62,13 @@ class CountriesFragment : Fragment() {
                 Status.ERROR -> error(it.message ?: getString(R.string.unknown_error))
             }
         }
+        viewModel.countriesViewEffects.observe(viewLifecycleOwner, EventObserver {
+            when (it.status) {
+                Status.SUCCESS -> {}
+                Status.LOADING -> loading()
+                Status.ERROR -> error(it.message ?: getString(R.string.unknown_error))
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -72,7 +80,7 @@ class CountriesFragment : Fragment() {
         return when (item.itemId) {
             R.id.menu_refresh -> {
                 if (isRefreshEnabled)
-                    viewModel.getCountries()
+                    viewModel.getCountries(null)
                 else
                     snackBar(getString(R.string.please_wait))?.show()
                 true
@@ -144,7 +152,7 @@ class CountriesFragment : Fragment() {
     private fun clearSearch() {
         fragmentExpoBinding?.cancelBtn?.setOnClickListener {
             fragmentExpoBinding?.searchView?.text = null
-            viewModel.queryCountries("")
+            viewModel.getCountries("")
             hideKeyboard(it)
         }
     }
@@ -200,7 +208,7 @@ class CountriesFragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     Handler(Looper.getMainLooper()).postDelayed({
-                        s?.let { viewModel.queryCountries(s.toString()) }
+                        s?.let { viewModel.getCountries(s.toString()) }
                     }, 300)
                 }
             }

@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sudhirkhanger.networksample.NetworkSampleRepository
 import com.sudhirkhanger.networksample.network.model.Resource
+import com.sudhirkhanger.networksample.network.model.Status
+import com.sudhirkhanger.networksample.utils.Event
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
@@ -19,17 +21,21 @@ class MainActivityViewModel internal constructor(
     val countriesLiveData: LiveData<Resource<CountriesResponse>>
         get() = _countriesLiveData
 
+    private val _countriesViewEffects = MutableLiveData<Event<Resource<Status>>>()
+    val countriesViewEffects: LiveData<Event<Resource<Status>>>
+        get() = _countriesViewEffects
+
     private val countries: MutableList<Country?> = mutableListOf()
 
     init {
-        getCountries()
+        getCountries(null)
     }
 
-    fun getCountries() {
+    private fun fetchCountries() {
         viewModelScope.launch {
             repository.getCountries()
-                .onStart { _countriesLiveData.postValue(Resource.loading(null)) }
-                .catch { _countriesLiveData.postValue(Resource.error(it.message ?: "", null)) }
+                .onStart { _countriesViewEffects.postValue(Event(Resource.loading(null))) }
+                .catch { _countriesViewEffects.postValue(Event(Resource.error(it.message ?: "", null))) }
                 .collect {
                     it.data?.let { list -> countries.addAll(list) }
                     _countriesLiveData.postValue(Resource.success(it))
@@ -37,11 +43,9 @@ class MainActivityViewModel internal constructor(
         }
     }
 
-    fun queryCountries(query: String) {
-        if (query.isEmpty()) {
-            _countriesLiveData.postValue(
-                Resource.success(CountriesResponse(countries, "", "1"))
-            )
+    fun getCountries(query: String?) {
+        if (query == null) {
+            fetchCountries()
         } else {
             val filteredList =
                 countries.filter { item -> item?.name?.contains(query, true) ?: false }
