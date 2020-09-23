@@ -15,13 +15,13 @@ import com.google.android.material.snackbar.Snackbar
 import com.sudhirkhanger.networksample.NetworkSampleComponent
 import com.sudhirkhanger.networksample.R
 import com.sudhirkhanger.networksample.databinding.FragmentCountriesBinding
-import com.sudhirkhanger.networksample.network.model.Status
+import com.sudhirkhanger.networksample.network.model.NetworkStatus
 import com.sudhirkhanger.networksample.utils.DefaultItemDecoration
 import com.sudhirkhanger.networksample.utils.EventObserver
 
 class CountriesFragment : Fragment() {
 
-    private var fragmentExpoBinding: FragmentCountriesBinding? = null
+    private var fragmentCountriesBinding: FragmentCountriesBinding? = null
 
     companion object {
         @JvmStatic
@@ -45,28 +45,25 @@ class CountriesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentCountriesBinding.inflate(inflater, container, false)
-        fragmentExpoBinding = binding
+        fragmentCountriesBinding = binding
         return binding.root
     }
 
     override fun onDestroyView() {
-        fragmentExpoBinding = null
+        fragmentCountriesBinding = null
         super.onDestroyView()
     }
 
     private fun setupUi() {
-        viewModel.countriesLiveData.observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> setUiData(it.data)
-                Status.LOADING -> loading()
-                Status.ERROR -> error(it.message ?: getString(R.string.unknown_error))
-            }
+        viewModel.countries.observe(viewLifecycleOwner) {
+            countriesAdapter.submitList(it)
         }
-        viewModel.countriesViewEffects.observe(viewLifecycleOwner, EventObserver {
+
+        viewModel.networkState.observe(viewLifecycleOwner, EventObserver {
             when (it.status) {
-                Status.SUCCESS -> {}
-                Status.LOADING -> loading()
-                Status.ERROR -> error(it.message ?: getString(R.string.unknown_error))
+                NetworkStatus.SUCCESS -> success()
+                NetworkStatus.RUNNING -> loading()
+                NetworkStatus.FAILED -> error(it.msg ?: "null")
             }
         })
     }
@@ -80,7 +77,7 @@ class CountriesFragment : Fragment() {
         return when (item.itemId) {
             R.id.menu_refresh -> {
                 if (isRefreshEnabled)
-                    viewModel.getCountries(null)
+                    viewModel.refresh()
                 else
                     snackBar(getString(R.string.please_wait))?.show()
                 true
@@ -90,47 +87,47 @@ class CountriesFragment : Fragment() {
     }
 
     private fun loading() {
-        fragmentExpoBinding?.blockView?.visibility = View.VISIBLE
-        fragmentExpoBinding?.progressBar?.visibility = View.VISIBLE
-        fragmentExpoBinding?.statusTv?.visibility = View.VISIBLE
-        fragmentExpoBinding?.statusTv?.text = getString(R.string.please_wait)
+        fragmentCountriesBinding?.blockView?.visibility = View.VISIBLE
+        fragmentCountriesBinding?.progressBar?.visibility = View.VISIBLE
+        fragmentCountriesBinding?.statusTv?.visibility = View.VISIBLE
+        fragmentCountriesBinding?.statusTv?.text = getString(R.string.please_wait)
         isRefreshEnabled = false
     }
 
     private fun error(message: String) {
-        fragmentExpoBinding?.blockView?.visibility = View.GONE
-        fragmentExpoBinding?.progressBar?.visibility = View.GONE
-        fragmentExpoBinding?.statusTv?.visibility = View.GONE
+        fragmentCountriesBinding?.blockView?.visibility = View.GONE
+        fragmentCountriesBinding?.progressBar?.visibility = View.GONE
+        fragmentCountriesBinding?.statusTv?.visibility = View.GONE
         isRefreshEnabled = true
         snackBar(message)?.show()
     }
 
     private fun success() {
-        fragmentExpoBinding?.blockView?.visibility = View.GONE
-        fragmentExpoBinding?.progressBar?.visibility = View.GONE
-        fragmentExpoBinding?.statusTv?.visibility = View.GONE
+        fragmentCountriesBinding?.blockView?.visibility = View.GONE
+        fragmentCountriesBinding?.progressBar?.visibility = View.GONE
+        fragmentCountriesBinding?.statusTv?.visibility = View.GONE
         isRefreshEnabled = true
-        fragmentExpoBinding?.countriesRv?.visibility = View.VISIBLE
-        fragmentExpoBinding?.emptyView?.visibility = View.GONE
+        fragmentCountriesBinding?.countriesRv?.visibility = View.VISIBLE
+        fragmentCountriesBinding?.emptyView?.visibility = View.GONE
     }
 
     private fun noDataView() {
-        fragmentExpoBinding?.blockView?.visibility = View.GONE
-        fragmentExpoBinding?.progressBar?.visibility = View.GONE
-        fragmentExpoBinding?.statusTv?.visibility = View.GONE
+        fragmentCountriesBinding?.blockView?.visibility = View.GONE
+        fragmentCountriesBinding?.progressBar?.visibility = View.GONE
+        fragmentCountriesBinding?.statusTv?.visibility = View.GONE
         isRefreshEnabled = true
-        fragmentExpoBinding?.countriesRv?.visibility = View.GONE
-        fragmentExpoBinding?.emptyView?.visibility = View.VISIBLE
+        fragmentCountriesBinding?.countriesRv?.visibility = View.GONE
+        fragmentCountriesBinding?.emptyView?.visibility = View.VISIBLE
     }
 
     private fun blockViewClickListener() {
-        fragmentExpoBinding?.blockView?.setOnClickListener {
+        fragmentCountriesBinding?.blockView?.setOnClickListener {
             snackBar(getString(R.string.please_wait))?.show()
         }
     }
 
     private fun snackBar(message: String): Snackbar? {
-        fragmentExpoBinding?.mainLayout?.let {
+        fragmentCountriesBinding?.mainLayout?.let {
             return Snackbar.make(
                 it,
                 message,
@@ -142,17 +139,16 @@ class CountriesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpSessionsRv()
         setupUi()
         blockViewClickListener()
-        setUpSessionsRv()
         initSearchExpo()
         clearSearch()
     }
 
     private fun clearSearch() {
-        fragmentExpoBinding?.cancelBtn?.setOnClickListener {
-            fragmentExpoBinding?.searchView?.text = null
-            viewModel.getCountries("")
+        fragmentCountriesBinding?.cancelBtn?.setOnClickListener {
+            fragmentCountriesBinding?.searchView?.text = null
             hideKeyboard(it)
         }
     }
@@ -161,19 +157,18 @@ class CountriesFragment : Fragment() {
         val imm = view.context
             .getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm?.hideSoftInputFromWindow(view.windowToken, 0)
-
     }
 
     private fun setUpSessionsRv() {
         countriesAdapter = CountriesAdapter {
             snackBar("Open Item")?.show()
         }
-        fragmentExpoBinding?.countriesRv?.apply {
+        fragmentCountriesBinding?.countriesRv?.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this.context)
             adapter = countriesAdapter
         }
-        fragmentExpoBinding?.countriesRv?.addItemDecoration(
+        fragmentCountriesBinding?.countriesRv?.addItemDecoration(
             DefaultItemDecoration(
                 resources.getDimensionPixelSize(R.dimen.dimen_8dp),
                 resources.getDimensionPixelSize(R.dimen.dimen_8dp)
@@ -181,17 +176,8 @@ class CountriesFragment : Fragment() {
         )
     }
 
-    private fun setUiData(response: CountriesResponse?) {
-        if (response?.data.isNullOrEmpty()) {
-            noDataView()
-        } else {
-            countriesAdapter.submitList(response?.data)
-            success()
-        }
-    }
-
     private fun initSearchExpo() {
-        fragmentExpoBinding?.searchView?.addTextChangedListener(
+        fragmentCountriesBinding?.searchView?.addTextChangedListener(
             object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -208,7 +194,13 @@ class CountriesFragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     Handler(Looper.getMainLooper()).postDelayed({
-                        s?.let { viewModel.getCountries(s.toString()) }
+                        s?.let {
+                            if (it.isBlank()) {
+                                viewModel.clearSearch()
+                            } else {
+                                viewModel.search(s.toString())
+                            }
+                        }
                     }, 300)
                 }
             }
