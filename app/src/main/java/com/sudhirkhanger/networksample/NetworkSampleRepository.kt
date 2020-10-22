@@ -1,6 +1,6 @@
 package com.sudhirkhanger.networksample
 
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.sudhirkhanger.networksample.network.NetworkSampleService
 import com.sudhirkhanger.networksample.network.model.Listing
@@ -10,6 +10,7 @@ import com.sudhirkhanger.networksample.utils.Event
 import com.sudhirkhanger.networksample.utils.NETWORK_SUCCESS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 class NetworkSampleRepository private constructor(
@@ -30,21 +31,22 @@ class NetworkSampleRepository private constructor(
     }
 
     private suspend fun fetchCountries() = networkSampleService.countries()
-    private val countriesGlobal = MutableLiveData<List<Country?>>(listOf())
+    private val source = MutableLiveData<List<Country?>>(listOf())
+    private val countries = MediatorLiveData<List<Country?>>()
     private val networkState = MutableLiveData<Event<NetworkState>>()
 
     fun getCountries(coroutineContext: CoroutineContext): Listing<Country> {
-        refresh(coroutineContext)
+        countries.addSource(source) { countries.value = it }
+        if (source.value?.isNullOrEmpty() == true) refresh(coroutineContext)
 
         return Listing(
-            data = countriesGlobal,
+            data = countries,
             networkState = networkState,
-            refresh = { refresh(coroutineContext) }
-        )
+            search = { search(it, coroutineContext) },
+            refresh = { refresh(coroutineContext) })
     }
 
-    private fun refresh(coroutineContext: CoroutineContext): LiveData<Event<NetworkState>> {
-        val networkState = MutableLiveData<Event<NetworkState>>()
+    private fun refresh(coroutineContext: CoroutineContext) {
         CoroutineScope(coroutineContext).launch {
             networkState.postValue(Event(NetworkState.LOADING))
             val countries: List<Country?>?
@@ -72,9 +74,23 @@ class NetworkSampleRepository private constructor(
                 return@launch
             }
 
-            countriesGlobal.postValue(countries)
+            this@NetworkSampleRepository.source.postValue(countries)
             networkState.postValue(Event(NetworkState.LOADED))
         }
-        return networkState
+    }
+
+    private fun search(query: String?, coroutineContext: CoroutineContext) {
+        if (query.isNullOrBlank()) {
+            source.value?.forEach { Timber.e("$it") }
+            countries.value = source.value
+        } else {
+            CoroutineScope(coroutineContext).launch {
+                val countries = source.value
+                val filteredList = countries?.filter { country ->
+                    country?.name?.contains(query, true) ?: false
+                }
+                this@NetworkSampleRepository.countries.postValue(filteredList)
+            }
+        }
     }
 }

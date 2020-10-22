@@ -2,7 +2,7 @@
 buildscript {
     ext.versions = [
             kotlin              : '1.4.0',
-            gradlePlugin        : '4.0.1',
+            gradlePlugin        : '4.1.0',
             glide               : '4.11.0',
             fragment_ktx        : '1.2.5',
             timber              : '4.7.1',

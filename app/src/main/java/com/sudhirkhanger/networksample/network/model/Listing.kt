@@ -6,5 +6,6 @@ import com.sudhirkhanger.networksample.utils.Event
 data class Listing<T>(
         val data: LiveData<List<T?>>,
         val networkState: LiveData<Event<NetworkState>>,
-        val refresh: () -> Unit
+        val search: ((String?) -> Unit)? = null,
+        val refresh: (() -> Unit)? = null
 )

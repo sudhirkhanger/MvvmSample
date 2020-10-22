@@ -56,7 +56,11 @@ class CountriesFragment : Fragment() {
 
     private fun setupUi() {
         viewModel.countries.observe(viewLifecycleOwner) {
-            countriesAdapter.submitList(it)
+            if (it.isEmpty()) {
+                noDataView()
+            } else {
+                countriesAdapter.submitList(it)
+            }
         }
 
         viewModel.networkState.observe(viewLifecycleOwner, EventObserver {
@@ -118,6 +122,7 @@ class CountriesFragment : Fragment() {
         isRefreshEnabled = true
         fragmentCountriesBinding?.countriesRv?.visibility = View.GONE
         fragmentCountriesBinding?.emptyView?.visibility = View.VISIBLE
+        fragmentCountriesBinding?.emptyView?.text = getString(R.string.no_data)
     }
 
     private fun blockViewClickListener() {
@@ -196,8 +201,10 @@ class CountriesFragment : Fragment() {
                     Handler(Looper.getMainLooper()).postDelayed({
                         s?.let {
                             if (it.isBlank()) {
-                                viewModel.clearSearch()
+                                fragmentCountriesBinding?.cancelBtn?.visibility = View.GONE
+                                viewModel.search(null)
                             } else {
+                                fragmentCountriesBinding?.cancelBtn?.visibility = View.VISIBLE
                                 viewModel.search(s.toString())
                             }
                         }
