@@ -1,5 +1,6 @@
 package com.sudhirkhanger.networksample.ui
 
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
@@ -11,9 +12,27 @@ class MainActivityViewModel internal constructor(
 ) : ViewModel() {
 
     private val countriesListing = MutableLiveData(repository.getCountries(Dispatchers.IO))
-    val countries = countriesListing.switchMap { it.data }
+    val countries = MediatorLiveData<List<Country?>>()
     val networkState = countriesListing.switchMap { it.networkState }
-
     fun refresh() = countriesListing.value?.refresh?.invoke()
-    fun search(query: String?) = countriesListing.value?.search?.invoke(query)
+
+    init {
+        countriesListing.value?.data?.apply {
+            countries.addSource(this) { countries.value = it }
+        }
+
+        if (countriesListing.value?.data?.value?.isEmpty() == true) refresh()
+    }
+
+    fun search(query: String) {
+        val countries = countriesListing.value?.data?.value
+        val filteredList = countries?.filter { country ->
+            country?.name?.contains(query, true) ?: false
+        }
+        this.countries.value = filteredList
+    }
+
+    fun clearSearch() {
+        countries.value = countriesListing.value?.data?.value
+    }
 }

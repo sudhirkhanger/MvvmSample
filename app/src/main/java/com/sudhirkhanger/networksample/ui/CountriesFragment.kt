@@ -8,6 +8,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +20,7 @@ import com.sudhirkhanger.networksample.databinding.FragmentCountriesBinding
 import com.sudhirkhanger.networksample.network.model.NetworkStatus
 import com.sudhirkhanger.networksample.utils.DefaultItemDecoration
 import com.sudhirkhanger.networksample.utils.EventObserver
+import timber.log.Timber
 
 class CountriesFragment : Fragment() {
 
@@ -54,13 +57,12 @@ class CountriesFragment : Fragment() {
         super.onDestroyView()
     }
 
-    private fun setupUi() {
+    private fun setUpUi() {
         viewModel.countries.observe(viewLifecycleOwner) {
-            if (it.isEmpty()) {
+            if (it.isEmpty())
                 noDataView()
-            } else {
-                countriesAdapter.submitList(it)
-            }
+            else
+                loadData(it)
         }
 
         viewModel.networkState.observe(viewLifecycleOwner, EventObserver {
@@ -91,38 +93,51 @@ class CountriesFragment : Fragment() {
     }
 
     private fun loading() {
-        fragmentCountriesBinding?.blockView?.visibility = View.VISIBLE
-        fragmentCountriesBinding?.progressBar?.visibility = View.VISIBLE
-        fragmentCountriesBinding?.statusTv?.visibility = View.VISIBLE
-        fragmentCountriesBinding?.statusTv?.text = getString(R.string.please_wait)
         isRefreshEnabled = false
+        fragmentCountriesBinding?.apply {
+            blockView.isVisible = true
+            progressBar.isVisible = true
+            statusTv.isVisible = true
+            statusTv.text = getText(R.string.please_wait)
+        }
     }
 
     private fun error(message: String) {
-        fragmentCountriesBinding?.blockView?.visibility = View.GONE
-        fragmentCountriesBinding?.progressBar?.visibility = View.GONE
-        fragmentCountriesBinding?.statusTv?.visibility = View.GONE
         isRefreshEnabled = true
+
+        fragmentCountriesBinding?.apply {
+            blockView.isGone = true
+            progressBar.isGone = true
+            statusTv.isGone = true
+        }
+
         snackBar(message)?.show()
     }
 
     private fun success() {
-        fragmentCountriesBinding?.blockView?.visibility = View.GONE
-        fragmentCountriesBinding?.progressBar?.visibility = View.GONE
-        fragmentCountriesBinding?.statusTv?.visibility = View.GONE
         isRefreshEnabled = true
-        fragmentCountriesBinding?.countriesRv?.visibility = View.VISIBLE
-        fragmentCountriesBinding?.emptyView?.visibility = View.GONE
+
+        fragmentCountriesBinding?.apply {
+            blockView.isGone = true
+            progressBar.isGone = true
+            statusTv.isGone = true
+        }
     }
 
     private fun noDataView() {
-        fragmentCountriesBinding?.blockView?.visibility = View.GONE
-        fragmentCountriesBinding?.progressBar?.visibility = View.GONE
-        fragmentCountriesBinding?.statusTv?.visibility = View.GONE
-        isRefreshEnabled = true
-        fragmentCountriesBinding?.countriesRv?.visibility = View.GONE
-        fragmentCountriesBinding?.emptyView?.visibility = View.VISIBLE
-        fragmentCountriesBinding?.emptyView?.text = getString(R.string.no_data)
+        fragmentCountriesBinding?.apply {
+            countriesRv.isGone = true
+            emptyView.isVisible = true
+        }
+    }
+
+    private fun loadData(countries: List<Country?>) {
+        countries.forEach { Timber.e(it?.name) }
+        fragmentCountriesBinding?.apply {
+            countriesRv.isVisible = true
+            emptyView.isGone = true
+            countriesAdapter.submitList(countries)
+        }
     }
 
     private fun blockViewClickListener() {
@@ -145,7 +160,7 @@ class CountriesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpSessionsRv()
-        setupUi()
+        setUpUi()
         blockViewClickListener()
         initSearchExpo()
         clearSearch()
@@ -155,6 +170,7 @@ class CountriesFragment : Fragment() {
         fragmentCountriesBinding?.cancelBtn?.setOnClickListener {
             fragmentCountriesBinding?.searchView?.text = null
             hideKeyboard(it)
+            viewModel.clearSearch()
         }
     }
 
@@ -182,6 +198,8 @@ class CountriesFragment : Fragment() {
     }
 
     private fun initSearchExpo() {
+        if (fragmentCountriesBinding?.searchView?.text.isNullOrEmpty())
+            fragmentCountriesBinding?.cancelBtn?.isGone = true
         fragmentCountriesBinding?.searchView?.addTextChangedListener(
             object : TextWatcher {
                 override fun beforeTextChanged(
@@ -190,22 +208,20 @@ class CountriesFragment : Fragment() {
                     count: Int,
                     after: Int
                 ) {
-
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
                 }
 
                 override fun afterTextChanged(s: Editable?) {
                     Handler(Looper.getMainLooper()).postDelayed({
                         s?.let {
                             if (it.isBlank()) {
-                                fragmentCountriesBinding?.cancelBtn?.visibility = View.GONE
-                                viewModel.search(null)
+                                fragmentCountriesBinding?.cancelBtn?.isGone = true
+                                viewModel.clearSearch()
                             } else {
-                                fragmentCountriesBinding?.cancelBtn?.visibility = View.VISIBLE
-                                viewModel.search(s.toString())
+                                fragmentCountriesBinding?.cancelBtn?.isVisible = true
+                                viewModel.search(s.toString().trim())
                             }
                         }
                     }, 300)
