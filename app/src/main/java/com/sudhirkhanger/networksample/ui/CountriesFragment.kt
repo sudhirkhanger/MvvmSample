@@ -20,7 +20,6 @@ import com.sudhirkhanger.networksample.databinding.FragmentCountriesBinding
 import com.sudhirkhanger.networksample.network.model.NetworkStatus
 import com.sudhirkhanger.networksample.utils.DefaultItemDecoration
 import com.sudhirkhanger.networksample.utils.EventObserver
-import timber.log.Timber
 
 class CountriesFragment : Fragment() {
 
@@ -132,7 +131,6 @@ class CountriesFragment : Fragment() {
     }
 
     private fun loadData(countries: List<Country?>) {
-        countries.forEach { Timber.e(it?.name) }
         fragmentCountriesBinding?.apply {
             countriesRv.isVisible = true
             emptyView.isGone = true

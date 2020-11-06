@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.sudhirkhanger.networksample.NetworkSampleRepository
 import kotlinx.coroutines.Dispatchers
+import timber.log.Timber
 
 class MainActivityViewModel internal constructor(
     repository: NetworkSampleRepository
@@ -25,6 +26,7 @@ class MainActivityViewModel internal constructor(
     }
 
     fun search(query: String) {
+        Timber.e(query)
         val countries = countriesListing.value?.data?.value
         val filteredList = countries?.filter { country ->
             country?.name?.contains(query, true) ?: false
