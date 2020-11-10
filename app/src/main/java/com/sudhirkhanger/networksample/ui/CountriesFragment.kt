@@ -59,16 +59,16 @@ class CountriesFragment : Fragment() {
     private fun setUpUi() {
         viewModel.countries.observe(viewLifecycleOwner) {
             if (it.isEmpty())
-                noDataView()
+                setMessageView()
             else
-                loadData(it)
+                setDataView(it)
         }
 
         viewModel.networkState.observe(viewLifecycleOwner, EventObserver {
             when (it.status) {
-                NetworkStatus.SUCCESS -> success()
-                NetworkStatus.RUNNING -> loading()
-                NetworkStatus.FAILED -> error(it.msg ?: "null")
+                NetworkStatus.SUCCESS -> setSuccess()
+                NetworkStatus.RUNNING -> setLoading()
+                NetworkStatus.FAILED -> setError(it.msg ?: "null")
             }
         })
     }
@@ -91,7 +91,7 @@ class CountriesFragment : Fragment() {
         }
     }
 
-    private fun loading() {
+    private fun setLoading() {
         isRefreshEnabled = false
         fragmentCountriesBinding?.apply {
             blockView.isVisible = true
@@ -101,7 +101,7 @@ class CountriesFragment : Fragment() {
         }
     }
 
-    private fun error(message: String) {
+    private fun setError(message: String) {
         isRefreshEnabled = true
 
         fragmentCountriesBinding?.apply {
@@ -113,7 +113,7 @@ class CountriesFragment : Fragment() {
         snackBar(message)?.show()
     }
 
-    private fun success() {
+    private fun setSuccess() {
         isRefreshEnabled = true
 
         fragmentCountriesBinding?.apply {
@@ -123,14 +123,14 @@ class CountriesFragment : Fragment() {
         }
     }
 
-    private fun noDataView() {
+    private fun setMessageView() {
         fragmentCountriesBinding?.apply {
             countriesRv.isGone = true
             emptyView.isVisible = true
         }
     }
 
-    private fun loadData(countries: List<Country?>) {
+    private fun setDataView(countries: List<Country?>) {
         fragmentCountriesBinding?.apply {
             countriesRv.isVisible = true
             emptyView.isGone = true
