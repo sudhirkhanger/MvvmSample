@@ -15,9 +15,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportFragmentManager.commit {
-            replace(binding.container.id, CountriesFragment.newInstance(), "tag")
-        }
+        if (savedInstanceState == null)
+            supportFragmentManager.commit {
+                replace(binding.container.id, CountriesFragment.newInstance(), "tag")
+            }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
