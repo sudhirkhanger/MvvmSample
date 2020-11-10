@@ -13,13 +13,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.sudhirkhanger.networksample.NetworkSampleComponent
 import com.sudhirkhanger.networksample.R
 import com.sudhirkhanger.networksample.databinding.FragmentCountriesBinding
 import com.sudhirkhanger.networksample.network.model.NetworkStatus
 import com.sudhirkhanger.networksample.utils.DefaultItemDecoration
 import com.sudhirkhanger.networksample.utils.EventObserver
+import com.sudhirkhanger.networksample.utils.showSnackbar
 
 class CountriesFragment : Fragment() {
 
@@ -84,7 +84,7 @@ class CountriesFragment : Fragment() {
                 if (isRefreshEnabled)
                     viewModel.refresh()
                 else
-                    snackBar(getString(R.string.please_wait))?.show()
+                    fragmentCountriesBinding?.mainLayout?.showSnackbar(R.string.please_wait)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -110,7 +110,7 @@ class CountriesFragment : Fragment() {
             statusTv.isGone = true
         }
 
-        snackBar(message)?.show()
+        fragmentCountriesBinding?.mainLayout?.showSnackbar(message)
     }
 
     private fun setSuccess() {
@@ -140,19 +140,8 @@ class CountriesFragment : Fragment() {
 
     private fun blockViewClickListener() {
         fragmentCountriesBinding?.blockView?.setOnClickListener {
-            snackBar(getString(R.string.please_wait))?.show()
+            it.showSnackbar(R.string.please_wait)
         }
-    }
-
-    private fun snackBar(message: String): Snackbar? {
-        fragmentCountriesBinding?.mainLayout?.let {
-            return Snackbar.make(
-                it,
-                message,
-                Snackbar.LENGTH_SHORT
-            )
-        }
-        return null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -180,7 +169,7 @@ class CountriesFragment : Fragment() {
 
     private fun setUpSessionsRv() {
         countriesAdapter = CountriesAdapter {
-            snackBar("Open Item")?.show()
+            fragmentCountriesBinding?.mainLayout?.showSnackbar(it.toString())
         }
         fragmentCountriesBinding?.countriesRv?.apply {
             setHasFixedSize(true)
