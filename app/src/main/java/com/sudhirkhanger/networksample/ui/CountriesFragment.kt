@@ -160,7 +160,7 @@ class CountriesFragment : Fragment() {
         setUpSessionsRv()
         setUpUi()
         blockViewClickListener()
-        initSearchExpo()
+        initCountrySearch()
         clearSearch()
     }
 
@@ -195,7 +195,7 @@ class CountriesFragment : Fragment() {
         )
     }
 
-    private fun initSearchExpo() {
+    private fun initCountrySearch() {
         if (fragmentCountriesBinding?.searchView?.text.isNullOrEmpty())
             fragmentCountriesBinding?.cancelBtn?.isGone = true
         fragmentCountriesBinding?.searchView?.addTextChangedListener(
