@@ -96,8 +96,6 @@ class CountriesFragment : Fragment() {
         fragmentCountriesBinding?.apply {
             blockView.isVisible = true
             progressBar.isVisible = true
-            statusTv.isVisible = true
-            statusTv.text = getText(R.string.please_wait)
         }
     }
 
@@ -107,7 +105,6 @@ class CountriesFragment : Fragment() {
         fragmentCountriesBinding?.apply {
             blockView.isGone = true
             progressBar.isGone = true
-            statusTv.isGone = true
         }
 
         fragmentCountriesBinding?.mainLayout?.showSnackbar(message)
@@ -119,7 +116,6 @@ class CountriesFragment : Fragment() {
         fragmentCountriesBinding?.apply {
             blockView.isGone = true
             progressBar.isGone = true
-            statusTv.isGone = true
         }
     }
 
@@ -134,8 +130,8 @@ class CountriesFragment : Fragment() {
         fragmentCountriesBinding?.apply {
             countriesRv.isVisible = true
             emptyView.isGone = true
-            countriesAdapter.submitList(countries)
         }
+        countriesAdapter.submitList(countries)
     }
 
     private fun blockViewClickListener() {
