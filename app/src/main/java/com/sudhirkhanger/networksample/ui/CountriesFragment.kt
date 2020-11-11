@@ -68,7 +68,7 @@ class CountriesFragment : Fragment() {
             when (it.status) {
                 NetworkStatus.SUCCESS -> setSuccess()
                 NetworkStatus.RUNNING -> setLoading()
-                NetworkStatus.FAILED -> setError(it.msg ?: "null")
+                NetworkStatus.FAILED -> setError(it.msg ?: getString(R.string.unknown_error))
             }
         })
     }
@@ -184,6 +184,7 @@ class CountriesFragment : Fragment() {
         )
     }
 
+    // TODO: 11/11/20 should handle in VM
     private fun initCountrySearch() {
         if (fragmentCountriesBinding?.searchView?.text.isNullOrEmpty())
             fragmentCountriesBinding?.cancelBtn?.isGone = true
