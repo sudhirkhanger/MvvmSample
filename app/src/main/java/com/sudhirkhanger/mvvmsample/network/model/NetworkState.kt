@@ -1,7 +1,7 @@
-package com.sudhirkhanger.networksample.network.model
+package com.sudhirkhanger.mvvmsample.network.model
 
 enum class NetworkStatus {
-    RUNNING,
+    LOADING,
     SUCCESS,
     FAILED
 }
@@ -12,8 +12,8 @@ data class NetworkState private constructor(
     val msg: String? = null
 ) {
     companion object {
-        val LOADED = NetworkState(NetworkStatus.SUCCESS)
-        val LOADING = NetworkState(NetworkStatus.RUNNING)
+        val SUCCESS = NetworkState(NetworkStatus.SUCCESS)
+        val LOADING = NetworkState(NetworkStatus.LOADING)
         fun error(msg: String?) = NetworkState(NetworkStatus.FAILED, msg)
     }
 }

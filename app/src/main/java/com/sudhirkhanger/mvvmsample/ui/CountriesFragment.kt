@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample.ui
+package com.sudhirkhanger.mvvmsample.ui
 
 import android.app.Activity
 import android.os.Bundle
@@ -13,13 +13,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sudhirkhanger.networksample.NetworkSampleComponent
-import com.sudhirkhanger.networksample.R
-import com.sudhirkhanger.networksample.databinding.FragmentCountriesBinding
-import com.sudhirkhanger.networksample.network.model.NetworkStatus
-import com.sudhirkhanger.networksample.utils.DefaultItemDecoration
-import com.sudhirkhanger.networksample.utils.combineTuple
-import com.sudhirkhanger.networksample.utils.showSnackbar
+import com.sudhirkhanger.mvvmsample.MvvmSampleComponent
+import com.sudhirkhanger.mvvmsample.R
+import com.sudhirkhanger.mvvmsample.databinding.FragmentCountriesBinding
+import com.sudhirkhanger.mvvmsample.network.model.NetworkStatus
+import com.sudhirkhanger.mvvmsample.utils.DefaultItemDecoration
+import com.sudhirkhanger.mvvmsample.utils.combineTuple
+import com.sudhirkhanger.mvvmsample.utils.showSnackbar
 
 class CountriesFragment : Fragment() {
 
@@ -31,7 +31,7 @@ class CountriesFragment : Fragment() {
     }
 
     private val viewModel: MainActivityViewModel by activityViewModels {
-        NetworkSampleComponent.provideMainViewModelFactory()
+        MvvmSampleComponent.provideMainViewModelFactory()
     }
 
     private var isRefreshEnabled = true
@@ -62,15 +62,15 @@ class CountriesFragment : Fragment() {
                 if (!data.isNullOrEmpty()) countriesAdapter.submitList(data)
                 networkState?.let {
                     when (it.getContentIfNotHandled()?.status) {
+                        NetworkStatus.LOADING -> {
+                            disableRefresh()
+                            setLoading()
+                            if (data.isNullOrEmpty()) setNoDataView()
+                        }
                         NetworkStatus.SUCCESS -> {
                             enableRefresh()
                             setSuccess()
                             setDataView()
-                        }
-                        NetworkStatus.RUNNING -> {
-                            disableRefresh()
-                            setLoading()
-                            if (data.isNullOrEmpty()) setNoDataView()
                         }
                         NetworkStatus.FAILED -> {
                             enableRefresh()

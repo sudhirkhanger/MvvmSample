@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample
+package com.sudhirkhanger.mvvmsample
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

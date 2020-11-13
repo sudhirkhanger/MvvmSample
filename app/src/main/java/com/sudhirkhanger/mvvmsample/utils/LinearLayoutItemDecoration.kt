@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample.utils
+package com.sudhirkhanger.mvvmsample.utils
 
 import android.graphics.Rect
 import android.view.View

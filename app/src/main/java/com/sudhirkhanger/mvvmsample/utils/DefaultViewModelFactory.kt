@@ -1,12 +1,12 @@
-package com.sudhirkhanger.networksample.utils
+package com.sudhirkhanger.mvvmsample.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.sudhirkhanger.networksample.NetworkSampleRepository
-import com.sudhirkhanger.networksample.ui.MainActivityViewModel
+import com.sudhirkhanger.mvvmsample.MvvmSampleRepository
+import com.sudhirkhanger.mvvmsample.ui.MainActivityViewModel
 
 class DefaultViewModelFactory(
-    private val repository: NetworkSampleRepository
+    private val repository: MvvmSampleRepository
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")

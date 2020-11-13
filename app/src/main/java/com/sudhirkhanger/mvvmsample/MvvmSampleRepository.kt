@@ -1,34 +1,34 @@
-package com.sudhirkhanger.networksample
+package com.sudhirkhanger.mvvmsample
 
 import androidx.lifecycle.MutableLiveData
-import com.sudhirkhanger.networksample.network.NetworkSampleService
-import com.sudhirkhanger.networksample.network.model.Listing
-import com.sudhirkhanger.networksample.network.model.NetworkState
-import com.sudhirkhanger.networksample.ui.Country
-import com.sudhirkhanger.networksample.utils.Event
-import com.sudhirkhanger.networksample.utils.NETWORK_SUCCESS
+import com.sudhirkhanger.mvvmsample.network.CountryService
+import com.sudhirkhanger.mvvmsample.network.model.Listing
+import com.sudhirkhanger.mvvmsample.network.model.NetworkState
+import com.sudhirkhanger.mvvmsample.ui.Country
+import com.sudhirkhanger.mvvmsample.utils.Event
+import com.sudhirkhanger.mvvmsample.utils.NETWORK_SUCCESS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class NetworkSampleRepository private constructor(
-    private val networkSampleService: NetworkSampleService
+class MvvmSampleRepository private constructor(
+    private val countryService: CountryService
 ) {
 
     companion object {
         @Volatile
-        private var instance: NetworkSampleRepository? = null
+        private var instance: MvvmSampleRepository? = null
 
-        fun getInstance(networkSampleService: NetworkSampleService) =
+        fun getInstance(countryService: CountryService) =
             instance
                 ?: synchronized(this) {
                     instance
-                        ?: NetworkSampleRepository(networkSampleService)
+                        ?: MvvmSampleRepository(countryService)
                             .also { instance = it }
                 }
     }
 
-    private suspend fun fetchCountries() = networkSampleService.countries()
+    private suspend fun fetchCountries() = countryService.countries()
     private val countries = MutableLiveData<List<Country?>>(listOf())
     private val networkState = MutableLiveData<Event<NetworkState>>()
 
@@ -67,8 +67,8 @@ class NetworkSampleRepository private constructor(
                 return@launch
             }
 
-            this@NetworkSampleRepository.countries.postValue(countries)
-            networkState.postValue(Event(NetworkState.LOADED))
+            this@MvvmSampleRepository.countries.postValue(countries)
+            networkState.postValue(Event(NetworkState.SUCCESS))
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample
+package com.sudhirkhanger.mvvmsample
 
 import org.junit.Test
 

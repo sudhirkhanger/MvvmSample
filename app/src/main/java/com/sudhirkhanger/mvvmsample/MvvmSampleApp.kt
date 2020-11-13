@@ -1,10 +1,10 @@
-package com.sudhirkhanger.networksample
+package com.sudhirkhanger.mvvmsample
 
 import android.app.Application
-import com.sudhirkhanger.networksample.utils.CustomDebugTree
+import com.sudhirkhanger.mvvmsample.utils.CustomDebugTree
 import timber.log.Timber
 
-class NetworkSampleApp : Application() {
+class MvvmSampleApp : Application() {
 
     override fun onCreate() {
         super.onCreate()

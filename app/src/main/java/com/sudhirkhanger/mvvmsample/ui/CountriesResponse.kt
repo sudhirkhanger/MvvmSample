@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample.ui
+package com.sudhirkhanger.mvvmsample.ui
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName

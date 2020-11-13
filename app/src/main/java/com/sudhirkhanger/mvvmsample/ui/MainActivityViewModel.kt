@@ -1,15 +1,15 @@
-package com.sudhirkhanger.networksample.ui
+package com.sudhirkhanger.mvvmsample.ui
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
-import com.sudhirkhanger.networksample.NetworkSampleRepository
+import com.sudhirkhanger.mvvmsample.MvvmSampleRepository
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 
 class MainActivityViewModel internal constructor(
-    repository: NetworkSampleRepository
+    repository: MvvmSampleRepository
 ) : ViewModel() {
 
     private val countriesListing = MutableLiveData(repository.getCountries(Dispatchers.IO))

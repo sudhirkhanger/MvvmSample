@@ -1,10 +1,10 @@
-package com.sudhirkhanger.networksample.ui
+package com.sudhirkhanger.mvvmsample.ui
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import com.sudhirkhanger.networksample.databinding.ActivityMainBinding
+import com.sudhirkhanger.mvvmsample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

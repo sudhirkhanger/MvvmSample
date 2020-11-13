@@ -2,7 +2,7 @@
 buildscript {
     ext.versions = [
             kotlin              : '1.4.10',
-            gradlePlugin        : '4.1.0',
+            gradlePlugin        : '4.1.1',
             glide               : '4.11.0',
             fragment_ktx        : '1.2.5',
             timber              : '4.7.1',
@@ -12,7 +12,7 @@ buildscript {
             gson                : '2.8.6',
             retrofit            : '2.9.0',
             okhttp              : '4.9.0',
-            material            : '1.2.0',
+            material            : '1.2.1',
             constraint_layout   : '2.0.4',
             coordinatorlayout   : '1.1.0',
             googleServices      : '4.3.3',

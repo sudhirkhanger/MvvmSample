@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample.ui
+package com.sudhirkhanger.mvvmsample.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.sudhirkhanger.networksample.databinding.ItemCountryBinding
+import com.sudhirkhanger.mvvmsample.databinding.ItemCountryBinding
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 class CountriesAdapter(private val expoClickListener: (String?) -> Unit) :

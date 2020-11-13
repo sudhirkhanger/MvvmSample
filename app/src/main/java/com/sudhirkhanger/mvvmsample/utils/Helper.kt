@@ -1,4 +1,4 @@
-package com.sudhirkhanger.networksample.utils
+package com.sudhirkhanger.mvvmsample.utils
 
 import android.view.View
 import androidx.annotation.StringRes
