@@ -18,7 +18,7 @@ import com.sudhirkhanger.networksample.R
 import com.sudhirkhanger.networksample.databinding.FragmentCountriesBinding
 import com.sudhirkhanger.networksample.network.model.NetworkStatus
 import com.sudhirkhanger.networksample.utils.DefaultItemDecoration
-import com.sudhirkhanger.networksample.utils.EventObserver
+import com.sudhirkhanger.networksample.utils.combineTuple
 import com.sudhirkhanger.networksample.utils.showSnackbar
 
 class CountriesFragment : Fragment() {
@@ -57,20 +57,32 @@ class CountriesFragment : Fragment() {
     }
 
     private fun setUpUi() {
-        viewModel.countries.observe(viewLifecycleOwner) {
-            if (it.isEmpty())
-                setMessageView()
-            else
-                setDataView(it)
-        }
-
-        viewModel.networkState.observe(viewLifecycleOwner, EventObserver {
-            when (it.status) {
-                NetworkStatus.SUCCESS -> setSuccess()
-                NetworkStatus.RUNNING -> setLoading()
-                NetworkStatus.FAILED -> setError(it.msg ?: getString(R.string.unknown_error))
+        combineTuple(viewModel.countries, viewModel.networkState)
+            .observe(viewLifecycleOwner) { (data, networkState) ->
+                if (!data.isNullOrEmpty()) countriesAdapter.submitList(data)
+                networkState?.let {
+                    when (it.getContentIfNotHandled()?.status) {
+                        NetworkStatus.SUCCESS -> {
+                            enableRefresh()
+                            setSuccess()
+                            setDataView()
+                        }
+                        NetworkStatus.RUNNING -> {
+                            disableRefresh()
+                            setLoading()
+                            if (data.isNullOrEmpty()) setNoDataView()
+                        }
+                        NetworkStatus.FAILED -> {
+                            enableRefresh()
+                            setError()
+                            fragmentCountriesBinding?.mainLayout?.showSnackbar(
+                                it.peekContent().msg ?: getString(R.string.unknown_error)
+                            )
+                        }
+                    }
+                    if (it.hasBeenHandled && data.isNullOrEmpty()) setNoDataView()
+                }
             }
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -92,46 +104,46 @@ class CountriesFragment : Fragment() {
     }
 
     private fun setLoading() {
-        isRefreshEnabled = false
         fragmentCountriesBinding?.apply {
             blockView.isVisible = true
             progressBar.isVisible = true
         }
     }
 
-    private fun setError(message: String) {
-        isRefreshEnabled = true
-
+    private fun setError() {
         fragmentCountriesBinding?.apply {
             blockView.isGone = true
             progressBar.isGone = true
         }
-
-        fragmentCountriesBinding?.mainLayout?.showSnackbar(message)
     }
 
     private fun setSuccess() {
-        isRefreshEnabled = true
-
         fragmentCountriesBinding?.apply {
             blockView.isGone = true
             progressBar.isGone = true
         }
     }
 
-    private fun setMessageView() {
+    private fun setNoDataView() {
         fragmentCountriesBinding?.apply {
             countriesRv.isGone = true
             emptyView.isVisible = true
         }
     }
 
-    private fun setDataView(countries: List<Country?>) {
+    private fun setDataView() {
         fragmentCountriesBinding?.apply {
             countriesRv.isVisible = true
             emptyView.isGone = true
         }
-        countriesAdapter.submitList(countries)
+    }
+
+    private fun enableRefresh() {
+        isRefreshEnabled = true
+    }
+
+    private fun disableRefresh() {
+        isRefreshEnabled = false
     }
 
     private fun blockViewClickListener() {
