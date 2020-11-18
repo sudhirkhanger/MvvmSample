@@ -59,7 +59,6 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:$versions.glide"
     implementation "jp.wasabeef:glide-transformations:$versions.glideTransformations"
 
-
     implementation "androidx.fragment:fragment-ktx:$versions.fragment_ktx"
 
     implementation "com.jakewharton.timber:timber:$versions.timber"
